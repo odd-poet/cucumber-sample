@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+    <context:component-scan base-package="net.oddpoet.cucumber.sample"/>
+
+    <!-- 테스트를 위한 Input 데이터를 쓸 수 있도록 PipedReader/Writer를 설정한다. -->
+    <bean id="inputPipedWriter" class="java.io.PipedWriter"/>
+    <bean id="pipedReader" class="java.io.PipedReader">
+        <constructor-arg>
+            <ref bean="inputPipedWriter"/>
+        </constructor-arg>
+    </bean>
+    <bean id="inputReader" class="java.io.BufferedReader">
+        <constructor-arg>
+            <ref bean="pipedReader"/>
+        </constructor-arg>
+    </bean>
+    <bean id="inputWriter" class="java.io.PrintWriter">
+        <constructor-arg>
+            <ref bean="inputPipedWriter"/>
+        </constructor-arg>
+    </bean>
+
+
+    <!-- 출력 결과를 읽을 수 있도록 PipedReader/Writer를 구성한다. -->
+    <bean id="outputWriter" class="net.oddpoet.cucumber.sample.testsupport.LoggedWriter"/>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename">
+            <value>message</value>
+        </property>
+        <property name="fileEncodings" value="UTF-8"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+</beans>
